@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Cup WinRate Pro｜世足 AI 勝率雷達</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1a2e;
+      --panel-2: #12243d;
+      --line: rgba(255, 255, 255, .1);
+      --text: #eef6ff;
+      --muted: #93a8c5;
+      --cyan: #18d5ff;
+      --green: #36e27a;
+      --yellow: #ffd44a;
+      --red: #ff5c62;
+      --black: #05070b;
+      --blue: #5a8cff;
+      --purple: #a879ff;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(24, 213, 255, .18), transparent 28%),
+        radial-gradient(circle at 90% 10%, rgba(54, 226, 122, .12), transparent 30%),
+        linear-gradient(180deg, #07111f 0%, #081729 48%, #05101d 100%);
+      padding-bottom: 96px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(7, 17, 31, .86);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .ball {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #06111f;
+      font-weight: 900;
+      background: conic-gradient(from 30deg, #fff 0 16%, #1ad7ff 16% 24%, #fff 24% 42%, #36e27a 42% 51%, #fff 51% 70%, #ffd44a 70% 78%, #fff 78% 100%);
+      box-shadow: 0 0 26px rgba(24, 213, 255, .42);
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      font-size: clamp(17px, 4vw, 24px);
+      line-height: 1.1;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      margin-left: 12px;
+    }
+
+    .nav a:hover { color: var(--cyan); }
+
+    main {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 28px 0 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(28px, 8vw, 58px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0;
+      color: #b7c9e4;
+      line-height: 1.7;
+    }
+
+    .status-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .04);
+      color: #cfe3ff;
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    @media (min-width: 900px) {
+      .grid.two { grid-template-columns: 1.1fr .9fr; }
+      .grid.three { grid-template-columns: repeat(3, 1fr); }
+      .hero { grid-template-columns: 1fr 330px; align-items: center; }
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(18, 36, 61, .94), rgba(11, 24, 43, .94));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 15px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .card-body { padding: 15px; }
+
+    .match-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .035);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .teams {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .teams span:nth-child(3) { text-align: right; }
+    .vs {
+      color: var(--cyan);
+      border: 1px solid rgba(24, 213, 255, .35);
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 12px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .prob-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .prob {
+      background: rgba(0, 0, 0, .17);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      min-width: 0;
+    }
+
+    .prob small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .meter {
+      height: 7px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, .08);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .meter i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      border-radius: inherit;
+    }
+
+    .risk {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 9px;
+      width: fit-content;
+      font-size: 12px;
+      color: #d8e8ff;
+    }
+
+    .light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      box-shadow: 0 0 14px currentColor;
+      background: currentColor;
+    }
+
+    .green { color: var(--green); }
+    .yellow { color: var(--yellow); }
+    .red { color: var(--red); }
+    .black { color: #151a23; border-color: #4e5563; }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: #c8d9ef;
+      font-size: 12px;
+      min-width: 0;
+    }
+
+    input, select, button {
+      font: inherit;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, .13);
+      background: rgba(0, 0, 0, .24);
+      color: var(--text);
+      padding: 10px 11px;
+      min-width: 0;
+    }
+
+    option { background: #102039; }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(135deg, #15c7ff, #36e27a);
+      color: #06111f;
+      border: 0;
+      font-weight: 850;
+      box-shadow: 0 10px 28px rgba(24, 213, 255, .18);
+    }
+
+    button.secondary {
+      background: rgba(255, 255, 255, .06);
+      color: var(--text);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 760px) {
+      .form-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .section-title {
+      margin: 28px 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .section-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chart-wrap {
+      display: grid;
+      place-items: center;
+      gap: 12px;
+    }
+
+    .pie {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) 0deg 180deg, var(--yellow) 180deg 245deg, var(--blue) 245deg 360deg);
+      display: grid;
+      place-items: center;
+      position: relative;
+      box-shadow: inset 0 0 24px rgba(0, 0, 0, .35);
+    }
+
+    .pie::after {
+      content: "";
+      position: absolute;
+      width: 112px;
+      height: 112px;
+      background: var(--panel);
+      border-radius: 50%;
+      border: 1px solid var(--line);
+    }
+
+    .pie strong {
+      position: relative;
+      z-index: 1;
+      font-size: 24px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .radar {
+      display: grid;
+      gap: 10px;
+    }
+
+    .radar-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 44px;
+      gap: 8px;
+      align-items: center;
+      color: #cddcf2;
+      font-size: 12px;
+    }
+
+    .bar {
+      height: 9px;
+      background: rgba(255, 255, 255, .08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+    }
+
+    .kpi-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 620px) {
+      .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .kpi small {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .kpi b { font-size: 20px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 7px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th { color: #b8c9df; font-weight: 700; }
+    tbody tr:nth-child(odd) { background: rgba(255, 255, 255, .025); }
+    .table-scroll { overflow-x: auto; }
+
+    .report {
+      color: #d9e8fa;
+      line-height: 1.75;
+      background: rgba(24, 213, 255, .06);
+      border: 1px solid rgba(24, 213, 255, .18);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .group-controls {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 760px) {
+      .group-controls { grid-template-columns: 180px 1fr auto; align-items: end; }
+    }
+
+    .score-grid {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr 56px 20px 56px 1fr;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .score-row input { text-align: center; padding: 8px 6px; }
+    .score-row span:last-child { text-align: right; }
+
+    .rank-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .rank-item {
+      display: grid;
+      grid-template-columns: 32px 1fr 70px;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px;
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .rank-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(24, 213, 255, .16);
+      color: var(--cyan);
+      font-weight: 900;
+    }
+
+    .champ-bar {
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, .08);
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .champ-bar i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      border-radius: inherit;
+    }
+
+    .fixed-warning {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: rgba(5, 9, 16, .94);
+      color: #f1f6ff;
+      border-top: 1px solid rgba(255, 212, 74, .35);
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.55;
+      backdrop-filter: blur(10px);
+    }
+
+    .fixed-warning b { color: var(--yellow); }
+    .hide-mobile { display: none; }
+    @media (min-width: 840px) { .hide-mobile { display: inline; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="ball">⚽</div>
+        <div>
+          <h1>World Cup WinRate Pro</h1>
+          <p>世足 AI 勝率雷達｜資料模型分析工具</p>
+        </div>
+      </div>
+      <nav class="hide-mobile">
+        <a href="#today">今日賽事</a>
+        <a href="#single">單場分析</a>
+        <a href="#groups">小組模擬</a>
+        <a href="#champion">冠軍機率</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h2>世足 AI 勝率雷達</h2>
+        <p>以 Elo、近期狀態、攻防數據、陣容完整度、戰術、場地氣候與市場變化建立簡化模型，分析勝率、平手率、爆冷率、讓球風險、大/小球與晉級機率。所有結果只作為資料視覺化與風險判讀參考。</p>
+        <div class="status-row">
+          <span class="pill">模型權重：Elo 25%｜近期 20%｜攻防 30%</span>
+          <span class="pill">Monte Carlo：1000 次</span>
+          <span class="pill">GitHub Pages Ready</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>風險燈號說明</h3></div>
+        <div class="card-body radar">
+          <span class="risk"><i class="light green"></i>綠燈：模型穩定，變數較少</span>
+          <span class="risk"><i class="light yellow"></i>黃燈：讓球或爆冷需觀察</span>
+          <span class="risk"><i class="light red"></i>紅燈：傷停、盤口或戰術風險高</span>
+          <span class="risk"><i class="light black"></i>黑燈：資訊混亂，不建議依賴預測</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="today">
+      <div class="section-title">
+        <div>
+          <h2>今日賽事列表</h2>
+          <p>假資料展示，可依部署需求替換為實際賽程。</p>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head">
+            <h3>賽事雷達</h3>
+            <button class="secondary" id="loadMatchBtn">載入選中賽事到單場分析</button>
+          </div>
+          <div class="card-body">
+            <div id="matchList" class="match-list"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>今日勝率圓餅圖</h3></div>
+          <div class="card-body chart-wrap">
+            <select id="pieMatchSelect"></select>
+            <div class="pie" id="winPie"><strong id="pieCenter">0%</strong></div>
+            <div class="legend">
+              <span><i class="dot" style="background:var(--green)"></i>主勝</span>
+              <span><i class="dot" style="background:var(--yellow)"></i>平手</span>
+              <span><i class="dot" style="background:var(--blue)"></i>客勝</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="single">
+      <div class="section-title">
+        <div>
+          <h2>單場勝率分析</h2>
+          <p>輸入雙方資料後自動計算勝率、爆冷、讓球、大/小球與 AI 報告。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>模型輸入</h3>
+          <button id="analyzeBtn">重新計算</button>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <label>Ａ隊名稱<input id="teamA" value="Brazil"></label>
+            <label>Ｂ隊名稱<input id="teamB" value="Croatia"></label>
+            <label>A Elo<input id="eloA" type="number" value="1885"></label>
+            <label>B Elo<input id="eloB" type="number" value="1785"></label>
+            <label>A 最近10場勝率 %<input id="formA" type="number" value="72"></label>
+            <label>B 最近10場勝率 %<input id="formB" type="number" value="55"></label>
+            <label>A 場均進球<input id="gfA" type="number" step="0.1" value="2.2"></label>
+            <label>B 場均進球<input id="gfB" type="number" step="0.1" value="1.4"></label>
+            <label>A 場均失球<input id="gaA" type="number" step="0.1" value="0.7"></label>
+            <label>B 場均失球<input id="gaB" type="number" step="0.1" value="1.1"></label>
+            <label>A xG<input id="xgA" type="number" step="0.1" value="2.0"></label>
+            <label>B xG<input id="xgB" type="number" step="0.1" value="1.3"></label>
+            <label>A xGA<input id="xgaA" type="number" step="0.1" value="0.9"></label>
+            <label>B xGA<input id="xgaB" type="number" step="0.1" value="1.2"></label>
+            <label>A 主力傷停<input id="injA" type="number" value="1"></label>
+            <label>B 主力傷停<input id="injB" type="number" value="0"></label>
+            <label>A 可能輪休
+              <select id="restA"><option value="0">否</option><option value="1">是</option></select>
+            </label>
+            <label>B 可能輪休
+              <select id="restB"><option value="0">否</option><option value="1">是</option></select>
+            </label>
+            <label>場地氣候影響
+              <select id="weatherImpact">
+                <option value="0">低</option><option value="1">中</option><option value="2">高</option>
+              </select>
+            </label>
+            <label>A 戰術相剋程度
+              <select id="tacticA">
+                <option value="0">不利</option><option value="1" selected>普通</option><option value="2">有利</option>
+              </select>
+            </label>
+            <label>B 戰術相剋程度
+              <select id="tacticB">
+                <option value="0">不利</option><option value="1" selected>普通</option><option value="2">有利</option>
+              </select>
+            </label>
+            <label>市場賠率變化
+              <select id="marketMove">
+                <option value="0">正常</option><option value="1">輕微異動</option><option value="2">異常變動</option>
+              </select>
+            </label>
+            <label>B 反擊能力
+              <select id="counterB">
+                <option value="0">低</option><option value="1" selected>中</option><option value="2">強</option>
+              </select>
+            </label>
+            <label>強隊只需平手晉級
+              <select id="drawEnough">
+                <option value="0">否</option><option value="1">是</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head"><h3>分析結果</h3><span id="singleRisk" class="risk"></span></div>
+          <div class="card-body">
+            <div class="kpi-grid" id="resultKpis"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>勝率視覺化</h3></div>
+          <div class="card-body chart-wrap">
+            <div class="pie" id="singlePie"><strong id="singlePieCenter">0%</strong></div>
+            <div class="legend" id="singleLegend"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head"><h3>爆冷雷達</h3></div>
+          <div class="card-body">
+            <div class="radar" id="upsetRadar"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>單場 AI 分析報告</h3></div>
+          <div class="card-body">
+            <div class="report" id="aiReport"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="groups">
+      <div class="section-title">
+        <div>
+          <h2>小組晉級模擬</h2>
+          <p>12 組、每組 4 隊。可輸入比分，系統計算排名、前二名、最佳第三名與 32 強機率。</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>小組控制台</h3></div>
+        <div class="card-body">
+          <div class="group-controls">
+            <label>選擇小組<select id="groupSelect"></select></label>
+            <label>快速說明<input value="比分留空時會用假資料勝率估算，輸入比分後改以實際比分計算。" disabled></label>
+            <button id="calcGroupBtn">更新小組排名</button>
+          </div>
+          <div class="score-grid" id="scoreGrid"></div>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head"><h3>小組排名表</h3></div>
+          <div class="card-body table-scroll">
+            <table id="groupTable"></table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>最佳第三名比較</h3></div>
+          <div class="card-body table-scroll">
+            <table id="thirdTable"></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="champion">
+      <div class="section-title">
+        <div>
+          <h2>冠軍機率模擬</h2>
+          <p>使用目前球隊強度資料執行 1000 次簡化 Monte Carlo 模擬。</p>
+        </div>
+        <button id="simulateBtn">執行 1000 次模擬</button>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head"><h3>冠軍機率排行榜</h3></div>
+          <div class="card-body">
+            <div class="rank-list" id="championRank"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>淘汰賽階段機率</h3></div>
+          <div class="card-body table-scroll">
+            <table id="stageTable"></table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="fixed-warning">
+    <b>風險提醒：</b>本系統僅提供機率分析與資料視覺化，不保證比賽結果。足球比賽受臨場狀態、裁判、傷病、天氣與戰術影響極大。請理性使用，勿過度投注，並遵守所在地法律。
+  </div>
+
+  <script>
+    const teams = [
+      "Brazil","Argentina","France","England","Spain","Germany","Portugal","Netherlands",
+      "Belgium","Croatia","Uruguay","Mexico","USA","Canada","Japan","Korea Republic",
+      "Australia","Saudi Arabia","Morocco","Senegal","Nigeria","Ghana","Cameroon","Egypt",
+      "Italy","Switzerland","Denmark","Sweden","Poland","Serbia","Colombia","Chile",
+      "Ecuador","Peru","Costa Rica","Jamaica","Qatar","Iran","Iraq","UAE",
+      "South Africa","Tunisia","Algeria","New Zealand","Wales","Scotland","Norway","Turkey"
+    ];
+
+    const baseRatings = Object.fromEntries(teams.map((team, i) => [
+      team,
+      {
+        elo: 1900 - i * 13 + (i % 5) * 8,
+        attack: Math.max(0.85, 2.25 - i * 0.018 + (i % 4) * 0.05),
+        defense: Math.min(1.85, 0.72 + i * 0.018),
+        form: Math.max(38, 78 - i * 0.85 + (i % 6) * 2)
+      }
+    ]));
+
+    const todayMatches = [
+      { home:"Brazil", away:"Croatia", time:"18:00", group:"Group A", venue:"Lusail Stadium", risk:"yellow" },
+      { home:"Argentina", away:"Japan", time:"20:00", group:"Group B", venue:"Education City Stadium", risk:"green" },
+      { home:"France", away:"Morocco", time:"22:00", group:"Group C", venue:"Al Bayt Stadium", risk:"red" },
+      { home:"England", away:"USA", time:"00:00", group:"Group D", venue:"Khalifa International Stadium", risk:"yellow" },
+      { home:"Spain", away:"Germany", time:"03:00", group:"Group E", venue:"Ahmad Bin Ali Stadium", risk:"black" }
+    ];
+
+    const groups = Array.from({ length: 12 }, (_, g) => ({
+      name: `Group ${String.fromCharCode(65 + g)}`,
+      teams: teams.slice(g * 4, g * 4 + 4)
+    }));
+
+    let selectedMatchIndex = 0;
+    let currentGroupIndex = 0;
+    const scores = {};
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function pct(value) {
+      return `${Math.round(value)}%`;
+    }
+
+    function readNum(id) {
+      return Number(document.getElementById(id).value) || 0;
+    }
+
+    function logistic(x) {
+      return 1 / (1 + Math.exp(-x));
+    }
+
+    function teamScore(data, side) {
+      const elo = data[`elo${side}`] / 2000 * 100;
+      const form = data[`form${side}`];
+      const attack = (data[`gf${side}`] * 26 + data[`xg${side}`] * 24);
+      const defense = 100 - (data[`ga${side}`] * 28 + data[`xga${side}`] * 22);
+      const lineup = 100 - data[`inj${side}`] * 10 - data[`rest${side}`] * 8;
+      const tactic = data[`tactic${side}`] === 2 ? 100 : data[`tactic${side}`] === 1 ? 72 : 48;
+      const weather = 100 - data.weatherImpact * 14;
+      return (
+        clamp(elo, 35, 100) * .25 +
+        clamp(form, 20, 95) * .20 +
+        clamp(attack, 25, 100) * .15 +
+        clamp(defense, 25, 100) * .15 +
+        clamp(lineup, 25, 100) * .10 +
+        tactic * .10 +
+        weather * .05
+      );
+    }
+
+    function calculateMatch(data) {
+      const scoreA = teamScore(data, "A");
+      const scoreB = teamScore(data, "B");
+      const diff = scoreA - scoreB;
+      const closeness = clamp(1 - Math.abs(diff) / 42, 0, 1);
+      const attackBalance = clamp(1 - Math.abs(data.xgA - data.xgB) / 2.2, 0, 1);
+      const defenseStable = clamp(1 - ((data.xgaA + data.xgaB) / 4), 0, 1);
+      let draw = 16 + closeness * 13 + attackBalance * 4 + defenseStable * 5;
+      draw = clamp(draw, 12, 34);
+
+      const nonDraw = 100 - draw;
+      const aShare = logistic(diff / 15);
+      let winA = nonDraw * aShare;
+      let winB = nonDraw - winA;
+
+      const expectedGoals = clamp((data.gfA + data.gfB + data.xgA + data.xgB + data.xgaA + data.xgaB) / 3, 1.2, 4.8);
+      const over = clamp(38 + (expectedGoals - 2.35) * 25 + ((data.xgA + data.xgB) - 2.8) * 7, 18, 82);
+      const under = 100 - over;
+
+      const favorite = winA >= winB ? "A" : "B";
+      const favoriteWin = Math.max(winA, winB);
+      const favoriteName = favorite === "A" ? data.teamA : data.teamB;
+      const dogName = favorite === "A" ? data.teamB : data.teamA;
+      const favInj = favorite === "A" ? data.injA : data.injB;
+      const favGa = favorite === "A" ? data.gaA : data.gaB;
+      const favRest = favorite === "A" ? data.restA : data.restB;
+      const dogCounter = favorite === "A" ? data.counterB : 1;
+      let upsetRaw = 18 + (100 - favoriteWin) * .35;
+      if (favoriteWin > 60) {
+        upsetRaw += favInj * 6;
+        if (favGa >= 1.2) upsetRaw += 10;
+        if (dogCounter >= 2) upsetRaw += 10;
+        if (data.marketMove >= 2) upsetRaw += 12;
+        if (favRest) upsetRaw += 9;
+        if (data.drawEnough) upsetRaw += 8;
+      }
+      const upset = clamp(upsetRaw, 8, 92);
+      const upsetLevel = upset >= 72 ? "極高" : upset >= 55 ? "高" : upset >= 35 ? "中" : "低";
+      const expectedMargin = Math.abs(data.gfA + data.xgA - data.gfB - data.xgB) / 2;
+      const handicapRisk = favoriteWin >= 58 && expectedMargin <= 1.1 ? "可能贏球，但讓球風險偏高。" : "讓球風險在模型可接受範圍內。";
+      const confidence = clamp(72 - draw * .35 - upset * .22 + Math.abs(diff) * .45 - data.marketMove * 5, 35, 91);
+      const riskColor = data.marketMove === 2 || upset >= 70 ? "red" : confidence < 48 ? "black" : upset >= 45 || draw >= 28 ? "yellow" : "green";
+
+      return {
+        winA, draw, winB, expectedGoals, over, under, upset, upsetLevel, handicapRisk,
+        confidence, riskColor, favoriteName, dogName, scoreA, scoreB
+      };
+    }
+
+    function riskLabel(color) {
+      const map = { green:"綠燈", yellow:"黃燈", red:"紅燈", black:"黑燈" };
+      return `<i class="light ${color}"></i>${map[color]}`;
+    }
+
+    function quickProb(home, away) {
+      const h = baseRatings[home], a = baseRatings[away];
+      const data = {
+        teamA: home, teamB: away, eloA: h.elo, eloB: a.elo, formA: h.form, formB: a.form,
+        gfA: h.attack, gfB: a.attack, gaA: h.defense, gaB: a.defense, xgA: h.attack * .95,
+        xgB: a.attack * .95, xgaA: h.defense, xgaB: a.defense, injA: 0, injB: 0,
+        restA: 0, restB: 0, tacticA: 1, tacticB: 1, weatherImpact: 0, marketMove: 0,
+        counterB: a.attack > 1.45 ? 2 : 1, drawEnough: 0
+      };
+      return calculateMatch(data);
+    }
+
+    function renderToday() {
+      const list = document.getElementById("matchList");
+      const select = document.getElementById("pieMatchSelect");
+      list.innerHTML = "";
+      select.innerHTML = "";
+      todayMatches.forEach((match, index) => {
+        const model = quickProb(match.home, match.away);
+        const risk = match.risk === "black" ? "black" : model.riskColor;
+        const node = document.createElement("div");
+        node.className = "match";
+        node.innerHTML = `
+          <div class="teams"><span>${match.home}</span><span class="vs">VS</span><span>${match.away}</span></div>
+          <div class="meta"><span>${match.time}</span><span>${match.group}</span><span>${match.venue}</span></div>
+          <div class="prob-row">
+            <div class="prob"><small>主勝率</small><b>${pct(model.winA)}</b><div class="meter"><i style="width:${model.winA}%"></i></div></div>
+            <div class="prob"><small>平手率</small><b>${pct(model.draw)}</b><div class="meter"><i style="width:${model.draw}%"></i></div></div>
+            <div class="prob"><small>客勝率</small><b>${pct(model.winB)}</b><div class="meter"><i style="width:${model.winB}%"></i></div></div>
+          </div>
+          <span class="risk">${riskLabel(risk)}</span>
+        `;
+        node.addEventListener("click", () => {
+          selectedMatchIndex = index;
+          select.value = index;
+          updateTodayPie();
+        });
+        list.appendChild(node);
+        select.add(new Option(`${match.home} vs ${match.away}`, index));
+      });
+      select.value = selectedMatchIndex;
+      updateTodayPie();
+    }
+
+    function updateTodayPie() {
+      selectedMatchIndex = Number(document.getElementById("pieMatchSelect").value);
+      const match = todayMatches[selectedMatchIndex];
+      const model = quickProb(match.home, match.away);
+      const a = model.winA * 3.6;
+      const d = (model.winA + model.draw) * 3.6;
+      document.getElementById("winPie").style.background = `conic-gradient(var(--green) 0deg ${a}deg, var(--yellow) ${a}deg ${d}deg, var(--blue) ${d}deg 360deg)`;
+      document.getElementById("pieCenter").textContent = pct(Math.max(model.winA, model.winB));
+    }
+
+    function readMatchInput() {
+      return {
+        teamA: document.getElementById("teamA").value || "A隊",
+        teamB: document.getElementById("teamB").value || "B隊",
+        eloA: readNum("eloA"), eloB: readNum("eloB"),
+        formA: readNum("formA"), formB: readNum("formB"),
+        gfA: readNum("gfA"), gfB: readNum("gfB"),
+        gaA: readNum("gaA"), gaB: readNum("gaB"),
+        xgA: readNum("xgA"), xgB: readNum("xgB"),
+        xgaA: readNum("xgaA"), xgaB: readNum("xgaB"),
+        injA: readNum("injA"), injB: readNum("injB"),
+        restA: Number(document.getElementById("restA").value),
+        restB: Number(document.getElementById("restB").value),
+        weatherImpact: Number(document.getElementById("weatherImpact").value),
+        tacticA: Number(document.getElementById("tacticA").value),
+        tacticB: Number(document.getElementById("tacticB").value),
+        marketMove: Number(document.getElementById("marketMove").value),
+        counterB: Number(document.getElementById("counterB").value),
+        drawEnough: Number(document.getElementById("drawEnough").value)
+      };
+    }
+
+    function renderSingle() {
+      const data = readMatchInput();
+      const model = calculateMatch(data);
+      const kpis = [
+        ["A隊勝率", pct(model.winA)], ["平手率", pct(model.draw)], ["B隊勝率", pct(model.winB)],
+        ["預估總進球", model.expectedGoals.toFixed(2)], ["大球機率", pct(model.over)], ["小球機率", pct(model.under)],
+        ["爆冷率", `${pct(model.upset)}｜${model.upsetLevel}`], ["AI信心分數", pct(model.confidence)]
+      ];
+      document.getElementById("resultKpis").innerHTML = kpis.map(([label, value]) => `<div class="kpi"><small>${label}</small><b>${value}</b></div>`).join("");
+      document.getElementById("singleRisk").innerHTML = riskLabel(model.riskColor);
+
+      const a = model.winA * 3.6;
+      const d = (model.winA + model.draw) * 3.6;
+      document.getElementById("singlePie").style.background = `conic-gradient(var(--green) 0deg ${a}deg, var(--yellow) ${a}deg ${d}deg, var(--blue) ${d}deg 360deg)`;
+      document.getElementById("singlePieCenter").textContent = pct(Math.max(model.winA, model.winB));
+      document.getElementById("singleLegend").innerHTML = `
+        <span><i class="dot" style="background:var(--green)"></i>${data.teamA} ${pct(model.winA)}</span>
+        <span><i class="dot" style="background:var(--yellow)"></i>平手 ${pct(model.draw)}</span>
+        <span><i class="dot" style="background:var(--blue)"></i>${data.teamB} ${pct(model.winB)}</span>
+      `;
+
+      const favSide = model.favoriteName === data.teamA ? "A" : "B";
+      const radar = [
+        ["主力傷停", clamp((favSide === "A" ? data.injA : data.injB) * 22, 0, 100)],
+        ["近期失球", clamp((favSide === "A" ? data.gaA : data.gaB) * 42, 0, 100)],
+        ["對手反擊", data.counterB * 38],
+        ["盤口異動", data.marketMove * 42],
+        ["輪休風險", (favSide === "A" ? data.restA : data.restB) * 78],
+        ["平手可晉級", data.drawEnough * 76]
+      ];
+      document.getElementById("upsetRadar").innerHTML = radar.map(([label, value]) => `
+        <div class="radar-row"><span>${label}</span><div class="bar"><i style="width:${clamp(value, 0, 100)}%"></i></div><b>${Math.round(value)}</b></div>
+      `).join("");
+
+      const riskText = model.riskColor === "green" ? "綠燈觀察場" : model.riskColor === "yellow" ? "黃燈觀察場" : model.riskColor === "red" ? "紅燈高風險場" : "黑燈資訊不穩場";
+      document.getElementById("aiReport").textContent =
+        `${model.favoriteName} 整體模型分數較高，勝率目前領先 ${model.dogName}。` +
+        `但本場平手率為 ${pct(model.draw)}，爆冷風險評級為「${model.upsetLevel}」。` +
+        `${data.teamA} 與 ${data.teamB} 的預估總進球為 ${model.expectedGoals.toFixed(2)}，大球機率 ${pct(model.over)}、小球機率 ${pct(model.under)}。` +
+        `${model.handicapRisk} 綜合傷停、輪休、戰術相剋、場地氣候與市場變化後，建議列為${riskText}。`;
+    }
+
+    function loadSelectedMatch() {
+      const match = todayMatches[selectedMatchIndex];
+      const h = baseRatings[match.home], a = baseRatings[match.away];
+      document.getElementById("teamA").value = match.home;
+      document.getElementById("teamB").value = match.away;
+      document.getElementById("eloA").value = h.elo;
+      document.getElementById("eloB").value = a.elo;
+      document.getElementById("formA").value = Math.round(h.form);
+      document.getElementById("formB").value = Math.round(a.form);
+      document.getElementById("gfA").value = h.attack.toFixed(1);
+      document.getElementById("gfB").value = a.attack.toFixed(1);
+      document.getElementById("gaA").value = h.defense.toFixed(1);
+      document.getElementById("gaB").value = a.defense.toFixed(1);
+      document.getElementById("xgA").value = (h.attack * .95).toFixed(1);
+      document.getElementById("xgB").value = (a.attack * .95).toFixed(1);
+      document.getElementById("xgaA").value = h.defense.toFixed(1);
+      document.getElementById("xgaB").value = a.defense.toFixed(1);
+      renderSingle();
+      location.hash = "#single";
+    }
+
+    function renderGroupControls() {
+      const select = document.getElementById("groupSelect");
+      select.innerHTML = "";
+      groups.forEach((group, i) => select.add(new Option(`${group.name}｜${group.teams.join("、")}`, i)));
+      select.value = currentGroupIndex;
+      renderScoreInputs();
+      renderGroupTables();
+    }
+
+    function groupFixtures(group) {
+      const t = group.teams;
+      return [[t[0], t[1]], [t[2], t[3]], [t[0], t[2]], [t[1], t[3]], [t[0], t[3]], [t[1], t[2]]];
+    }
+
+    function renderScoreInputs() {
+      const group = groups[currentGroupIndex];
+      const key = group.name;
+      scores[key] ||= {};
+      document.getElementById("scoreGrid").innerHTML = groupFixtures(group).map(([a, b], i) => {
+        const row = scores[key][i] || {};
+        return `
+          <div class="score-row">
+            <span>${a}</span>
+            <input data-game="${i}" data-side="a" type="number" min="0" value="${row.a ?? ""}" placeholder="-">
+            <span>:</span>
+            <input data-game="${i}" data-side="b" type="number" min="0" value="${row.b ?? ""}" placeholder="-">
+            <span>${b}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function calcOneGroup(group, useAllEstimated = false) {
+      const table = Object.fromEntries(group.teams.map(team => [team, { team, pts:0, gd:0, gf:0, ga:0, p:0, qualify:0 }]));
+      const groupScores = scores[group.name] || {};
+      groupFixtures(group).forEach(([a, b], i) => {
+        let ga = groupScores[i]?.a;
+        let gb = groupScores[i]?.b;
+        if (ga === undefined || gb === undefined || ga === "" || gb === "" || useAllEstimated) {
+          const model = quickProb(a, b);
+          const aGoals = model.expectedGoals * (model.winA / Math.max(1, model.winA + model.winB));
+          const bGoals = model.expectedGoals - aGoals;
+          ga = Math.round(clamp(aGoals, 0, 4));
+          gb = Math.round(clamp(bGoals, 0, 4));
+        } else {
+          ga = Number(ga);
+          gb = Number(gb);
+        }
+        table[a].p++; table[b].p++;
+        table[a].gf += ga; table[a].ga += gb; table[a].gd += ga - gb;
+        table[b].gf += gb; table[b].ga += ga; table[b].gd += gb - ga;
+        if (ga > gb) table[a].pts += 3;
+        else if (gb > ga) table[b].pts += 3;
+        else { table[a].pts++; table[b].pts++; }
+      });
+      return Object.values(table).sort((x, y) => y.pts - x.pts || y.gd - x.gd || y.gf - x.gf || baseRatings[y.team].elo - baseRatings[x.team].elo);
+    }
+
+    function renderGroupTables() {
+      const group = groups[currentGroupIndex];
+      const rank = calcOneGroup(group);
+      rank.forEach((row, i) => row.qualify = i < 2 ? 92 - i * 10 : i === 2 ? 46 : 18);
+      document.getElementById("groupTable").innerHTML = `
+        <thead><tr><th>#</th><th>隊伍</th><th>積分</th><th>淨勝球</th><th>進球</th><th>32強機率</th></tr></thead>
+        <tbody>${rank.map((r, i) => `<tr><td>${i + 1}</td><td>${r.team}${i < 2 ? " ★" : ""}</td><td>${r.pts}</td><td>${r.gd}</td><td>${r.gf}</td><td>${pct(r.qualify)}</td></tr>`).join("")}</tbody>
+      `;
+
+      const thirds = groups.map(groupItem => {
+        const row = calcOneGroup(groupItem, groupItem.name !== group.name)[2];
+        const eloBoost = (baseRatings[row.team].elo - 1500) / 20;
+        return { ...row, group: groupItem.name, q32: clamp(35 + row.pts * 8 + row.gd * 4 + eloBoost, 5, 88) };
+      }).sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+      document.getElementById("thirdTable").innerHTML = `
+        <thead><tr><th>#</th><th>組別</th><th>隊伍</th><th>積分</th><th>淨勝球</th><th>最佳第三機率</th></tr></thead>
+        <tbody>${thirds.map((r, i) => `<tr><td>${i + 1}</td><td>${r.group}</td><td>${r.team}${i < 8 ? " ▲" : ""}</td><td>${r.pts}</td><td>${r.gd}</td><td>${pct(r.q32)}</td></tr>`).join("")}</tbody>
+      `;
+    }
+
+    function saveScoresFromInputs() {
+      const group = groups[currentGroupIndex];
+      scores[group.name] ||= {};
+      document.querySelectorAll("#scoreGrid input").forEach(input => {
+        const game = input.dataset.game;
+        const side = input.dataset.side;
+        scores[group.name][game] ||= {};
+        scores[group.name][game][side] = input.value;
+      });
+    }
+
+    function weightedPick(candidates) {
+      const total = candidates.reduce((sum, team) => sum + Math.pow(baseRatings[team].elo / 1500, 5), 0);
+      let roll = Math.random() * total;
+      for (const team of candidates) {
+        roll -= Math.pow(baseRatings[team].elo / 1500, 5);
+        if (roll <= 0) return team;
+      }
+      return candidates[candidates.length - 1];
+    }
+
+    function simulateTournament(iterations = 1000) {
+      const stats = Object.fromEntries(teams.map(team => [team, { group:0, r16:0, r8:0, r4:0, final:0, champion:0 }]));
+      for (let run = 0; run < iterations; run++) {
+        const qualified = [];
+        groups.forEach(group => {
+          const ranked = calcOneGroup(group, true);
+          ranked[0].team && qualified.push(ranked[0].team, ranked[1].team);
+          stats[ranked[0].team].group++;
+          stats[ranked[1].team].group++;
+        });
+        const thirds = groups.map(group => calcOneGroup(group, true)[2].team)
+          .sort((a, b) => baseRatings[b].elo - baseRatings[a].elo)
+          .slice(0, 8);
+        thirds.forEach(team => { qualified.push(team); stats[team].group++; });
+
+        let round = qualified.slice(0, 32);
+        while (round.length > 1) {
+          const next = [];
+          for (let i = 0; i < round.length; i += 2) {
+            next.push(weightedPick([round[i], round[i + 1]]));
+          }
+          if (next.length === 16) next.forEach(team => stats[team].r16++);
+          if (next.length === 8) next.forEach(team => stats[team].r8++);
+          if (next.length === 4) next.forEach(team => stats[team].r4++);
+          if (next.length === 2) next.forEach(team => stats[team].final++);
+          if (next.length === 1) stats[next[0]].champion++;
+          round = next;
+        }
+      }
+      return Object.entries(stats).map(([team, s]) => ({
+        team,
+        group: s.group / iterations * 100,
+        r16: s.r16 / iterations * 100,
+        r8: s.r8 / iterations * 100,
+        r4: s.r4 / iterations * 100,
+        final: s.final / iterations * 100,
+        champion: s.champion / iterations * 100
+      })).sort((a, b) => b.champion - a.champion);
+    }
+
+    function renderSimulation() {
+      const rows = simulateTournament(1000);
+      document.getElementById("championRank").innerHTML = rows.slice(0, 10).map((r, i) => `
+        <div class="rank-item">
+          <span class="rank-num">${i + 1}</span>
+          <div><b>${r.team}</b><div class="champ-bar"><i style="width:${r.champion}%"></i></div></div>
+          <b>${r.champion.toFixed(1)}%</b>
+        </div>
+      `).join("");
+      document.getElementById("stageTable").innerHTML = `
+        <thead><tr><th>隊伍</th><th>小組出線</th><th>進16強</th><th>進8強</th><th>進4強</th><th>進決賽</th><th>奪冠</th></tr></thead>
+        <tbody>${rows.slice(0, 24).map(r => `
+          <tr><td>${r.team}</td><td>${r.group.toFixed(1)}%</td><td>${r.r16.toFixed(1)}%</td><td>${r.r8.toFixed(1)}%</td><td>${r.r4.toFixed(1)}%</td><td>${r.final.toFixed(1)}%</td><td>${r.champion.toFixed(1)}%</td></tr>
+        `).join("")}</tbody>
+      `;
+    }
+
+    document.getElementById("pieMatchSelect").addEventListener("change", updateTodayPie);
+    document.getElementById("loadMatchBtn").addEventListener("click", loadSelectedMatch);
+    document.getElementById("analyzeBtn").addEventListener("click", renderSingle);
+    document.querySelectorAll("#single input, #single select").forEach(el => el.addEventListener("input", renderSingle));
+    document.getElementById("groupSelect").addEventListener("change", e => {
+      saveScoresFromInputs();
+      currentGroupIndex = Number(e.target.value);
+      renderScoreInputs();
+      renderGroupTables();
+    });
+    document.getElementById("calcGroupBtn").addEventListener("click", () => {
+      saveScoresFromInputs();
+      renderGroupTables();
+    });
+    document.getElementById("scoreGrid").addEventListener("input", saveScoresFromInputs);
+    document.getElementById("simulateBtn").addEventListener("click", renderSimulation);
+
+    renderToday();
+    renderSingle();
+    renderGroupControls();
+    renderSimulation();
+  </script>
+</body>
+</html>
