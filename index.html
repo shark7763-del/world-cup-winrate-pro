@@ -647,8 +647,9 @@
         </div>
         <div class="card-body">
           <div class="form-grid">
-            <label>Ａ隊名稱<input id="teamA" value="Brazil"></label>
-            <label>Ｂ隊名稱<input id="teamB" value="Croatia"></label>
+            <label>Ａ隊名稱<input id="teamA" value="Brazil" list="teamOptions"></label>
+            <label>Ｂ隊名稱<input id="teamB" value="Croatia" list="teamOptions"></label>
+            <datalist id="teamOptions"></datalist>
             <label>A Elo<input id="eloA" type="number" value="1885"></label>
             <label>B Elo<input id="eloB" type="number" value="1785"></label>
             <label>A 最近10場勝率 %<input id="formA" type="number" value="72"></label>
@@ -808,6 +809,67 @@
       "South Africa","Tunisia","Algeria","New Zealand","Wales","Scotland","Norway","Turkey"
     ];
 
+    const teamInfo = {
+      "Brazil": { flag: "🇧🇷", zh: "巴西" },
+      "Argentina": { flag: "🇦🇷", zh: "阿根廷" },
+      "France": { flag: "🇫🇷", zh: "法國" },
+      "England": { flag: "🏴", zh: "英格蘭" },
+      "Spain": { flag: "🇪🇸", zh: "西班牙" },
+      "Germany": { flag: "🇩🇪", zh: "德國" },
+      "Portugal": { flag: "🇵🇹", zh: "葡萄牙" },
+      "Netherlands": { flag: "🇳🇱", zh: "荷蘭" },
+      "Belgium": { flag: "🇧🇪", zh: "比利時" },
+      "Croatia": { flag: "🇭🇷", zh: "克羅埃西亞" },
+      "Uruguay": { flag: "🇺🇾", zh: "烏拉圭" },
+      "Mexico": { flag: "🇲🇽", zh: "墨西哥" },
+      "USA": { flag: "🇺🇸", zh: "美國" },
+      "Canada": { flag: "🇨🇦", zh: "加拿大" },
+      "Japan": { flag: "🇯🇵", zh: "日本" },
+      "Korea Republic": { flag: "🇰🇷", zh: "韓國" },
+      "Australia": { flag: "🇦🇺", zh: "澳洲" },
+      "Saudi Arabia": { flag: "🇸🇦", zh: "沙烏地阿拉伯" },
+      "Morocco": { flag: "🇲🇦", zh: "摩洛哥" },
+      "Senegal": { flag: "🇸🇳", zh: "塞內加爾" },
+      "Nigeria": { flag: "🇳🇬", zh: "奈及利亞" },
+      "Ghana": { flag: "🇬🇭", zh: "迦納" },
+      "Cameroon": { flag: "🇨🇲", zh: "喀麥隆" },
+      "Egypt": { flag: "🇪🇬", zh: "埃及" },
+      "Italy": { flag: "🇮🇹", zh: "義大利" },
+      "Switzerland": { flag: "🇨🇭", zh: "瑞士" },
+      "Denmark": { flag: "🇩🇰", zh: "丹麥" },
+      "Sweden": { flag: "🇸🇪", zh: "瑞典" },
+      "Poland": { flag: "🇵🇱", zh: "波蘭" },
+      "Serbia": { flag: "🇷🇸", zh: "塞爾維亞" },
+      "Colombia": { flag: "🇨🇴", zh: "哥倫比亞" },
+      "Chile": { flag: "🇨🇱", zh: "智利" },
+      "Ecuador": { flag: "🇪🇨", zh: "厄瓜多" },
+      "Peru": { flag: "🇵🇪", zh: "秘魯" },
+      "Costa Rica": { flag: "🇨🇷", zh: "哥斯大黎加" },
+      "Jamaica": { flag: "🇯🇲", zh: "牙買加" },
+      "Qatar": { flag: "🇶🇦", zh: "卡達" },
+      "Iran": { flag: "🇮🇷", zh: "伊朗" },
+      "Iraq": { flag: "🇮🇶", zh: "伊拉克" },
+      "UAE": { flag: "🇦🇪", zh: "阿聯酋" },
+      "South Africa": { flag: "🇿🇦", zh: "南非" },
+      "Tunisia": { flag: "🇹🇳", zh: "突尼西亞" },
+      "Algeria": { flag: "🇩🇿", zh: "阿爾及利亞" },
+      "New Zealand": { flag: "🇳🇿", zh: "紐西蘭" },
+      "Wales": { flag: "🏴", zh: "威爾斯" },
+      "Scotland": { flag: "🏴", zh: "蘇格蘭" },
+      "Norway": { flag: "🇳🇴", zh: "挪威" },
+      "Turkey": { flag: "🇹🇷", zh: "土耳其" }
+    };
+
+    function displayTeam(team) {
+      const info = teamInfo[team];
+      return info ? `${info.flag} ${info.zh}` : team;
+    }
+
+    function teamOptionText(team) {
+      const info = teamInfo[team];
+      return info ? `${team}｜${info.flag} ${info.zh}` : team;
+    }
+
     const baseRatings = Object.fromEntries(teams.map((team, i) => [
       team,
       {
@@ -947,7 +1009,7 @@
         const node = document.createElement("div");
         node.className = "match";
         node.innerHTML = `
-          <div class="teams"><span>${match.home}</span><span class="vs">VS</span><span>${match.away}</span></div>
+          <div class="teams"><span>${displayTeam(match.home)}</span><span class="vs">VS</span><span>${displayTeam(match.away)}</span></div>
           <div class="meta"><span>${match.time}</span><span>${match.group}</span><span>${match.venue}</span></div>
           <div class="prob-row">
             <div class="prob"><small>主勝率</small><b>${pct(model.winA)}</b><div class="meter"><i style="width:${model.winA}%"></i></div></div>
@@ -962,10 +1024,16 @@
           updateTodayPie();
         });
         list.appendChild(node);
-        select.add(new Option(`${match.home} vs ${match.away}`, index));
+        select.add(new Option(`${displayTeam(match.home)} vs ${displayTeam(match.away)}`, index));
       });
       select.value = selectedMatchIndex;
       updateTodayPie();
+    }
+
+    function renderTeamOptions() {
+      document.getElementById("teamOptions").innerHTML = teams
+        .map(team => `<option value="${team}">${teamOptionText(team)}</option>`)
+        .join("");
     }
 
     function updateTodayPie() {
@@ -1016,9 +1084,9 @@
       document.getElementById("singlePie").style.background = `conic-gradient(var(--green) 0deg ${a}deg, var(--yellow) ${a}deg ${d}deg, var(--blue) ${d}deg 360deg)`;
       document.getElementById("singlePieCenter").textContent = pct(Math.max(model.winA, model.winB));
       document.getElementById("singleLegend").innerHTML = `
-        <span><i class="dot" style="background:var(--green)"></i>${data.teamA} ${pct(model.winA)}</span>
+        <span><i class="dot" style="background:var(--green)"></i>${displayTeam(data.teamA)} ${pct(model.winA)}</span>
         <span><i class="dot" style="background:var(--yellow)"></i>平手 ${pct(model.draw)}</span>
-        <span><i class="dot" style="background:var(--blue)"></i>${data.teamB} ${pct(model.winB)}</span>
+        <span><i class="dot" style="background:var(--blue)"></i>${displayTeam(data.teamB)} ${pct(model.winB)}</span>
       `;
 
       const favSide = model.favoriteName === data.teamA ? "A" : "B";
@@ -1036,9 +1104,9 @@
 
       const riskText = model.riskColor === "green" ? "綠燈觀察場" : model.riskColor === "yellow" ? "黃燈觀察場" : model.riskColor === "red" ? "紅燈高風險場" : "黑燈資訊不穩場";
       document.getElementById("aiReport").textContent =
-        `${model.favoriteName} 整體模型分數較高，勝率目前領先 ${model.dogName}。` +
+        `${displayTeam(model.favoriteName)} 整體模型分數較高，勝率目前領先 ${displayTeam(model.dogName)}。` +
         `但本場平手率為 ${pct(model.draw)}，爆冷風險評級為「${model.upsetLevel}」。` +
-        `${data.teamA} 與 ${data.teamB} 的預估總進球為 ${model.expectedGoals.toFixed(2)}，大球機率 ${pct(model.over)}、小球機率 ${pct(model.under)}。` +
+        `${displayTeam(data.teamA)} 與 ${displayTeam(data.teamB)} 的預估總進球為 ${model.expectedGoals.toFixed(2)}，大球機率 ${pct(model.over)}、小球機率 ${pct(model.under)}。` +
         `${model.handicapRisk} 綜合傷停、輪休、戰術相剋、場地氣候與市場變化後，建議列為${riskText}。`;
     }
 
@@ -1066,7 +1134,7 @@
     function renderGroupControls() {
       const select = document.getElementById("groupSelect");
       select.innerHTML = "";
-      groups.forEach((group, i) => select.add(new Option(`${group.name}｜${group.teams.join("、")}`, i)));
+      groups.forEach((group, i) => select.add(new Option(`${group.name}｜${group.teams.map(displayTeam).join("、")}`, i)));
       select.value = currentGroupIndex;
       renderScoreInputs();
       renderGroupTables();
@@ -1085,11 +1153,11 @@
         const row = scores[key][i] || {};
         return `
           <div class="score-row">
-            <span>${a}</span>
+            <span>${displayTeam(a)}</span>
             <input data-game="${i}" data-side="a" type="number" min="0" value="${row.a ?? ""}" placeholder="-">
             <span>:</span>
             <input data-game="${i}" data-side="b" type="number" min="0" value="${row.b ?? ""}" placeholder="-">
-            <span>${b}</span>
+            <span>${displayTeam(b)}</span>
           </div>
         `;
       }).join("");
@@ -1127,7 +1195,7 @@
       rank.forEach((row, i) => row.qualify = i < 2 ? 92 - i * 10 : i === 2 ? 46 : 18);
       document.getElementById("groupTable").innerHTML = `
         <thead><tr><th>#</th><th>隊伍</th><th>積分</th><th>淨勝球</th><th>進球</th><th>32強機率</th></tr></thead>
-        <tbody>${rank.map((r, i) => `<tr><td>${i + 1}</td><td>${r.team}${i < 2 ? " ★" : ""}</td><td>${r.pts}</td><td>${r.gd}</td><td>${r.gf}</td><td>${pct(r.qualify)}</td></tr>`).join("")}</tbody>
+        <tbody>${rank.map((r, i) => `<tr><td>${i + 1}</td><td>${displayTeam(r.team)}${i < 2 ? " ★" : ""}</td><td>${r.pts}</td><td>${r.gd}</td><td>${r.gf}</td><td>${pct(r.qualify)}</td></tr>`).join("")}</tbody>
       `;
 
       const thirds = groups.map(groupItem => {
@@ -1137,7 +1205,7 @@
       }).sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
       document.getElementById("thirdTable").innerHTML = `
         <thead><tr><th>#</th><th>組別</th><th>隊伍</th><th>積分</th><th>淨勝球</th><th>最佳第三機率</th></tr></thead>
-        <tbody>${thirds.map((r, i) => `<tr><td>${i + 1}</td><td>${r.group}</td><td>${r.team}${i < 8 ? " ▲" : ""}</td><td>${r.pts}</td><td>${r.gd}</td><td>${pct(r.q32)}</td></tr>`).join("")}</tbody>
+        <tbody>${thirds.map((r, i) => `<tr><td>${i + 1}</td><td>${r.group}</td><td>${displayTeam(r.team)}${i < 8 ? " ▲" : ""}</td><td>${r.pts}</td><td>${r.gd}</td><td>${pct(r.q32)}</td></tr>`).join("")}</tbody>
       `;
     }
 
@@ -1207,14 +1275,14 @@
       document.getElementById("championRank").innerHTML = rows.slice(0, 10).map((r, i) => `
         <div class="rank-item">
           <span class="rank-num">${i + 1}</span>
-          <div><b>${r.team}</b><div class="champ-bar"><i style="width:${r.champion}%"></i></div></div>
+          <div><b>${displayTeam(r.team)}</b><div class="champ-bar"><i style="width:${r.champion}%"></i></div></div>
           <b>${r.champion.toFixed(1)}%</b>
         </div>
       `).join("");
       document.getElementById("stageTable").innerHTML = `
         <thead><tr><th>隊伍</th><th>小組出線</th><th>進16強</th><th>進8強</th><th>進4強</th><th>進決賽</th><th>奪冠</th></tr></thead>
         <tbody>${rows.slice(0, 24).map(r => `
-          <tr><td>${r.team}</td><td>${r.group.toFixed(1)}%</td><td>${r.r16.toFixed(1)}%</td><td>${r.r8.toFixed(1)}%</td><td>${r.r4.toFixed(1)}%</td><td>${r.final.toFixed(1)}%</td><td>${r.champion.toFixed(1)}%</td></tr>
+          <tr><td>${displayTeam(r.team)}</td><td>${r.group.toFixed(1)}%</td><td>${r.r16.toFixed(1)}%</td><td>${r.r8.toFixed(1)}%</td><td>${r.r4.toFixed(1)}%</td><td>${r.final.toFixed(1)}%</td><td>${r.champion.toFixed(1)}%</td></tr>
         `).join("")}</tbody>
       `;
     }
@@ -1236,6 +1304,7 @@
     document.getElementById("scoreGrid").addEventListener("input", saveScoresFromInputs);
     document.getElementById("simulateBtn").addEventListener("click", renderSimulation);
 
+    renderTeamOptions();
     renderToday();
     renderSingle();
     renderGroupControls();
