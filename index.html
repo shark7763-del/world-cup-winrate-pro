@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>World Cup 2026 AI Radar｜世界盃勝率雷達 Pro</title>
+  <title>World Cup WinRate Pro｜世足 AI 勝率雷達</title>
   <style>
     :root {
       --bg: #050f19;
@@ -566,8 +566,8 @@
       <div class="brand">
         <div class="ball">⚽</div>
         <div>
-          <h1>World Cup 2026 AI Radar</h1>
-          <p>世界盃勝率雷達 Pro｜中文國旗版</p>
+          <h1>World Cup WinRate Pro</h1>
+          <p>世足 AI 勝率雷達｜中文國旗版</p>
         </div>
       </div>
       <nav class="hide-mobile">
@@ -582,10 +582,10 @@
   <main>
     <section class="hero">
       <div>
-        <h2>2026 世界盃 AI 勝率雷達</h2>
+        <h2>世足 AI 勝率雷達</h2>
         <p>以 Elo、近期狀態、攻防數據、陣容完整度、戰術、場地氣候與市場變化建立簡化模型，分析勝率、平手率、爆冷率、讓球風險、大/小球與晉級機率。介面改為中文隊名與國旗顯示，所有結果只作為資料視覺化與風險判讀參考。</p>
         <div class="status-row">
-          <span class="pill">模型權重：Elo 28%｜近期 18%｜攻防 30%</span>
+          <span class="pill">模型權重：Elo 25%｜近期 20%｜攻防 30%</span>
           <span class="pill">Monte Carlo：1000 次</span>
           <span class="pill">2026 賽程節點｜中文國旗版</span>
         </div>
@@ -1006,14 +1006,13 @@
       const tactic = data[`tactic${side}`] === 2 ? 100 : data[`tactic${side}`] === 1 ? 72 : 48;
       const weather = 100 - data.weatherImpact * 14;
       return (
-        clamp(elo, 35, 100) * .28 +
-        clamp(form, 20, 95) * .18 +
+        clamp(elo, 35, 100) * .25 +
+        clamp(form, 20, 95) * .20 +
         clamp(attack, 25, 100) * .15 +
         clamp(defense, 25, 100) * .15 +
-        clamp(lineup, 25, 100) * .09 +
-        tactic * .09 +
-        weather * .05 +
-        clamp((100 - Math.abs(attack - defense) * .15), 35, 100) * .03
+        clamp(lineup, 25, 100) * .10 +
+        tactic * .10 +
+        weather * .05
       );
     }
 
