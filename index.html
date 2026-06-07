@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>World Cup WinRate Pro｜世足 AI 勝率雷達</title>
+  <title>World Cup 2026 AI Radar｜世界盃勝率雷達 Pro</title>
   <style>
     :root {
-      --bg: #07111f;
-      --panel: #0d1a2e;
-      --panel-2: #12243d;
+      --bg: #050f19;
+      --panel: #0b1f2c;
+      --panel-2: #123044;
       --line: rgba(255, 255, 255, .1);
       --text: #eef6ff;
       --muted: #93a8c5;
-      --cyan: #18d5ff;
-      --green: #36e27a;
-      --yellow: #ffd44a;
-      --red: #ff5c62;
+      --cyan: #00d7ff;
+      --green: #17e889;
+      --yellow: #ffd84d;
+      --red: #ff4d6d;
       --black: #05070b;
       --blue: #5a8cff;
       --purple: #a879ff;
@@ -29,9 +29,10 @@
       color: var(--text);
       font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
       background:
-        radial-gradient(circle at 10% 0%, rgba(24, 213, 255, .18), transparent 28%),
-        radial-gradient(circle at 90% 10%, rgba(54, 226, 122, .12), transparent 30%),
-        linear-gradient(180deg, #07111f 0%, #081729 48%, #05101d 100%);
+        radial-gradient(circle at 8% 0%, rgba(0, 215, 255, .22), transparent 30%),
+        radial-gradient(circle at 80% 8%, rgba(23, 232, 137, .14), transparent 28%),
+        linear-gradient(135deg, rgba(255, 216, 77, .08), transparent 25%),
+        linear-gradient(180deg, #050f19 0%, #071b2b 50%, #04101b 100%);
       padding-bottom: 96px;
     }
 
@@ -565,8 +566,8 @@
       <div class="brand">
         <div class="ball">⚽</div>
         <div>
-          <h1>World Cup WinRate Pro</h1>
-          <p>世足 AI 勝率雷達｜資料模型分析工具</p>
+          <h1>World Cup 2026 AI Radar</h1>
+          <p>世界盃勝率雷達 Pro｜中文國旗版</p>
         </div>
       </div>
       <nav class="hide-mobile">
@@ -581,12 +582,12 @@
   <main>
     <section class="hero">
       <div>
-        <h2>世足 AI 勝率雷達</h2>
-        <p>以 Elo、近期狀態、攻防數據、陣容完整度、戰術、場地氣候與市場變化建立簡化模型，分析勝率、平手率、爆冷率、讓球風險、大/小球與晉級機率。所有結果只作為資料視覺化與風險判讀參考。</p>
+        <h2>2026 世界盃 AI 勝率雷達</h2>
+        <p>以 Elo、近期狀態、攻防數據、陣容完整度、戰術、場地氣候與市場變化建立簡化模型，分析勝率、平手率、爆冷率、讓球風險、大/小球與晉級機率。介面改為中文隊名與國旗顯示，所有結果只作為資料視覺化與風險判讀參考。</p>
         <div class="status-row">
-          <span class="pill">模型權重：Elo 25%｜近期 20%｜攻防 30%</span>
+          <span class="pill">模型權重：Elo 28%｜近期 18%｜攻防 30%</span>
           <span class="pill">Monte Carlo：1000 次</span>
-          <span class="pill">GitHub Pages Ready</span>
+          <span class="pill">2026 賽程節點｜中文國旗版</span>
         </div>
       </div>
       <div class="card">
@@ -604,7 +605,7 @@
       <div class="section-title">
         <div>
           <h2>今日賽事列表</h2>
-          <p>假資料展示，可依部署需求替換為實際賽程。</p>
+          <p>依你提供的 Bing Sports 台北時間賽程，加入 2026 世界盃開幕週與小組賽節點；可再替換成完整 API 或官方 CSV。</p>
         </div>
       </div>
       <div class="grid two">
@@ -647,8 +648,8 @@
         </div>
         <div class="card-body">
           <div class="form-grid">
-            <label>Ａ隊名稱<input id="teamA" value="Brazil" list="teamOptions"></label>
-            <label>Ｂ隊名稱<input id="teamB" value="Croatia" list="teamOptions"></label>
+            <label>Ａ隊名稱<input id="teamA" value="🇧🇷 巴西" list="teamOptions"></label>
+            <label>Ｂ隊名稱<input id="teamB" value="🇭🇷 克羅埃西亞" list="teamOptions"></label>
             <datalist id="teamOptions"></datalist>
             <label>A Elo<input id="eloA" type="number" value="1885"></label>
             <label>B Elo<input id="eloB" type="number" value="1785"></label>
@@ -801,12 +802,16 @@
 
   <script>
     const teams = [
-      "Brazil","Argentina","France","England","Spain","Germany","Portugal","Netherlands",
-      "Belgium","Croatia","Uruguay","Mexico","USA","Canada","Japan","Korea Republic",
-      "Australia","Saudi Arabia","Morocco","Senegal","Nigeria","Ghana","Cameroon","Egypt",
-      "Italy","Switzerland","Denmark","Sweden","Poland","Serbia","Colombia","Chile",
-      "Ecuador","Peru","Costa Rica","Jamaica","Qatar","Iran","Iraq","UAE",
-      "South Africa","Tunisia","Algeria","New Zealand","Wales","Scotland","Norway","Turkey"
+      "Mexico","South Africa","Korea Republic","Czechia","Canada","Bosnia and Herzegovina",
+      "USA","Paraguay","Qatar","Switzerland","Brazil","Morocco","Haiti","Scotland",
+      "Australia","Turkey","Germany","Curacao","Netherlands","Japan","Ivory Coast","Ecuador",
+      "Sweden","Tunisia","Spain","Cape Verde","Belgium","Egypt","Saudi Arabia","Uruguay",
+      "Iran","New Zealand","France","Senegal","Iraq","Norway","Argentina","Algeria",
+      "Austria","Jordan","Portugal","Congo DR","England","Croatia","Ghana","Panama",
+      "Uzbekistan","Colombia","Italy","Denmark","Poland","Serbia","Nigeria","Cameroon",
+      "Chile","Peru","Costa Rica","Jamaica","UAE","Wales","Slovakia","Ukraine",
+      "Greece","Romania","Hungary","Slovenia","Mali","Angola","Burkina Faso","China",
+      "Thailand","Indonesia","Vietnam","India"
     ];
 
     const teamInfo = {
@@ -860,6 +865,34 @@
       "Turkey": { flag: "🇹🇷", zh: "土耳其" }
     };
 
+    Object.assign(teamInfo, {
+      "Czechia": { flag: "🇨🇿", zh: "捷克" },
+      "Bosnia and Herzegovina": { flag: "🇧🇦", zh: "波士尼亞與赫塞哥維納" },
+      "Paraguay": { flag: "🇵🇾", zh: "巴拉圭" },
+      "Curacao": { flag: "🇨🇼", zh: "庫拉索" },
+      "Ivory Coast": { flag: "🇨🇮", zh: "象牙海岸" },
+      "Cape Verde": { flag: "🇨🇻", zh: "維德角" },
+      "Congo DR": { flag: "🇨🇩", zh: "剛果民主共和國" },
+      "Uzbekistan": { flag: "🇺🇿", zh: "烏茲別克" },
+      "Austria": { flag: "🇦🇹", zh: "奧地利" },
+      "Jordan": { flag: "🇯🇴", zh: "約旦" },
+      "Panama": { flag: "🇵🇦", zh: "巴拿馬" },
+      "Slovakia": { flag: "🇸🇰", zh: "斯洛伐克" },
+      "Ukraine": { flag: "🇺🇦", zh: "烏克蘭" },
+      "Greece": { flag: "🇬🇷", zh: "希臘" },
+      "Romania": { flag: "🇷🇴", zh: "羅馬尼亞" },
+      "Hungary": { flag: "🇭🇺", zh: "匈牙利" },
+      "Slovenia": { flag: "🇸🇮", zh: "斯洛維尼亞" },
+      "Mali": { flag: "🇲🇱", zh: "馬利" },
+      "Angola": { flag: "🇦🇴", zh: "安哥拉" },
+      "Burkina Faso": { flag: "🇧🇫", zh: "布吉納法索" },
+      "China": { flag: "🇨🇳", zh: "中國" },
+      "Thailand": { flag: "🇹🇭", zh: "泰國" },
+      "Indonesia": { flag: "🇮🇩", zh: "印尼" },
+      "Vietnam": { flag: "🇻🇳", zh: "越南" },
+      "India": { flag: "🇮🇳", zh: "印度" }
+    });
+
     function displayTeam(team) {
       const info = teamInfo[team];
       return info ? `${info.flag} ${info.zh}` : team;
@@ -867,7 +900,18 @@
 
     function teamOptionText(team) {
       const info = teamInfo[team];
-      return info ? `${team}｜${info.flag} ${info.zh}` : team;
+      return info ? `${info.flag} ${info.zh}｜${team}` : team;
+    }
+
+    function resolveTeam(input) {
+      const raw = String(input || "").trim();
+      if (teamInfo[raw]) return raw;
+      const clean = raw.replace(/[\u{1F1E6}-\u{1F1FF}\u{1F3F4}\uFE0F]/gu, "").trim();
+      const found = teams.find(team => {
+        const info = teamInfo[team];
+        return clean === team || clean === info?.zh || raw.includes(info?.zh || "");
+      });
+      return found || raw;
     }
 
     const baseRatings = Object.fromEntries(teams.map((team, i) => [
@@ -880,12 +924,52 @@
       }
     ]));
 
+    const ratingSeeds = {
+      Argentina:[1915,2.15,.78,78], France:[1908,2.12,.82,76], Brazil:[1895,2.10,.86,74],
+      Spain:[1888,2.05,.84,73], England:[1878,1.96,.88,72], Portugal:[1872,2.02,.92,71],
+      Germany:[1845,1.92,1.02,66], Netherlands:[1840,1.90,.96,67], Belgium:[1818,1.82,1.04,64],
+      Uruguay:[1812,1.74,.98,65], Croatia:[1805,1.68,1.02,63], Switzerland:[1788,1.58,1.08,61],
+      Morocco:[1780,1.55,1.02,62], Japan:[1776,1.62,1.08,63], Senegal:[1768,1.54,1.04,61],
+      USA:[1760,1.58,1.12,60], Canada:[1718,1.42,1.22,56], Mexico:[1742,1.50,1.18,58],
+      "Korea Republic":[1748,1.48,1.16,58], Australia:[1712,1.34,1.24,54], Turkey:[1766,1.66,1.18,60],
+      Colombia:[1778,1.62,1.10,62], Ecuador:[1748,1.45,1.13,58], Paraguay:[1698,1.22,1.20,52],
+      "South Africa":[1658,1.18,1.28,50], Czechia:[1735,1.44,1.16,56], "Bosnia and Herzegovina":[1685,1.30,1.30,52],
+      Qatar:[1635,1.15,1.38,49], Haiti:[1588,1.05,1.52,46], Scotland:[1715,1.36,1.24,55],
+      Curacao:[1578,1.02,1.56,45], "Ivory Coast":[1728,1.42,1.18,57], Sweden:[1740,1.44,1.14,57],
+      Tunisia:[1675,1.18,1.26,51], "Cape Verde":[1665,1.16,1.30,50], Egypt:[1708,1.34,1.18,55],
+      "Saudi Arabia":[1668,1.18,1.32,50], Iran:[1724,1.38,1.18,56], "New Zealand":[1608,1.08,1.44,47],
+      Iraq:[1642,1.12,1.36,49], Norway:[1752,1.66,1.22,58], Algeria:[1712,1.35,1.22,55],
+      Austria:[1768,1.58,1.14,60], Jordan:[1628,1.08,1.38,48], "Congo DR":[1660,1.18,1.34,50],
+      Ghana:[1692,1.26,1.28,52], Panama:[1602,1.04,1.46,47], Uzbekistan:[1662,1.18,1.34,50]
+    };
+
+    Object.entries(ratingSeeds).forEach(([team, seed]) => {
+      if (baseRatings[team]) {
+        baseRatings[team] = { elo: seed[0], attack: seed[1], defense: seed[2], form: seed[3] };
+      }
+    });
+
     const todayMatches = [
-      { home:"Brazil", away:"Croatia", time:"18:00", group:"Group A", venue:"Lusail Stadium", risk:"yellow" },
-      { home:"Argentina", away:"Japan", time:"20:00", group:"Group B", venue:"Education City Stadium", risk:"green" },
-      { home:"France", away:"Morocco", time:"22:00", group:"Group C", venue:"Al Bayt Stadium", risk:"red" },
-      { home:"England", away:"USA", time:"00:00", group:"Group D", venue:"Khalifa International Stadium", risk:"yellow" },
-      { home:"Spain", away:"Germany", time:"03:00", group:"Group E", venue:"Ahmad Bin Ali Stadium", risk:"black" }
+      { home:"Mexico", away:"South Africa", date:"2026/06/12", time:"03:00", group:"Group A", venue:"Mexico City Stadium", risk:"yellow" },
+      { home:"Korea Republic", away:"Czechia", date:"2026/06/12", time:"10:00", group:"Group A", venue:"Guadalajara Stadium", risk:"yellow" },
+      { home:"Canada", away:"Bosnia and Herzegovina", date:"2026/06/13", time:"03:00", group:"Group B", venue:"Toronto Stadium", risk:"green" },
+      { home:"USA", away:"Paraguay", date:"2026/06/13", time:"09:00", group:"Group D", venue:"Los Angeles Stadium", risk:"yellow" },
+      { home:"Qatar", away:"Switzerland", date:"2026/06/14", time:"03:00", group:"Group B", venue:"San Francisco Bay Area Stadium", risk:"red" },
+      { home:"Brazil", away:"Morocco", date:"2026/06/14", time:"06:00", group:"Group C", venue:"New York/New Jersey Stadium", risk:"yellow" },
+      { home:"Haiti", away:"Scotland", date:"2026/06/14", time:"09:00", group:"Group C", venue:"Boston Stadium", risk:"red" },
+      { home:"Australia", away:"Turkey", date:"2026/06/14", time:"12:00", group:"Group D", venue:"BC Place Vancouver", risk:"yellow" },
+      { home:"Germany", away:"Curacao", date:"2026/06/15", time:"01:00", group:"Group E", venue:"Houston Stadium", risk:"green" },
+      { home:"Netherlands", away:"Japan", date:"2026/06/15", time:"04:00", group:"Group F", venue:"Dallas Stadium", risk:"yellow" },
+      { home:"Ivory Coast", away:"Ecuador", date:"2026/06/15", time:"07:00", group:"Group E", venue:"Philadelphia Stadium", risk:"yellow" },
+      { home:"Sweden", away:"Tunisia", date:"2026/06/15", time:"10:00", group:"Group F", venue:"Monterrey Stadium", risk:"yellow" },
+      { home:"Spain", away:"Cape Verde", date:"2026/06/16", time:"00:00", group:"Group H", venue:"Atlanta Stadium", risk:"green" },
+      { home:"Belgium", away:"Egypt", date:"2026/06/16", time:"03:00", group:"Group G", venue:"Seattle Stadium", risk:"yellow" },
+      { home:"Saudi Arabia", away:"Uruguay", date:"2026/06/16", time:"06:00", group:"Group H", venue:"Miami Stadium", risk:"yellow" },
+      { home:"Iran", away:"New Zealand", date:"2026/06/16", time:"09:00", group:"Group G", venue:"Los Angeles Stadium", risk:"yellow" },
+      { home:"France", away:"Senegal", date:"2026/06/17", time:"03:00", group:"Group I", venue:"New York/New Jersey Stadium", risk:"yellow" },
+      { home:"Argentina", away:"Algeria", date:"2026/06/17", time:"09:00", group:"Group J", venue:"Kansas City Stadium", risk:"green" },
+      { home:"Portugal", away:"Congo DR", date:"2026/06/18", time:"01:00", group:"Group K", venue:"Houston Stadium", risk:"green" },
+      { home:"England", away:"Croatia", date:"2026/06/18", time:"04:00", group:"Group L", venue:"Dallas Stadium", risk:"yellow" }
     ];
 
     const groups = Array.from({ length: 12 }, (_, g) => ({
@@ -922,13 +1006,14 @@
       const tactic = data[`tactic${side}`] === 2 ? 100 : data[`tactic${side}`] === 1 ? 72 : 48;
       const weather = 100 - data.weatherImpact * 14;
       return (
-        clamp(elo, 35, 100) * .25 +
-        clamp(form, 20, 95) * .20 +
+        clamp(elo, 35, 100) * .28 +
+        clamp(form, 20, 95) * .18 +
         clamp(attack, 25, 100) * .15 +
         clamp(defense, 25, 100) * .15 +
-        clamp(lineup, 25, 100) * .10 +
-        tactic * .10 +
-        weather * .05
+        clamp(lineup, 25, 100) * .09 +
+        tactic * .09 +
+        weather * .05 +
+        clamp((100 - Math.abs(attack - defense) * .15), 35, 100) * .03
       );
     }
 
@@ -1010,7 +1095,7 @@
         node.className = "match";
         node.innerHTML = `
           <div class="teams"><span>${displayTeam(match.home)}</span><span class="vs">VS</span><span>${displayTeam(match.away)}</span></div>
-          <div class="meta"><span>${match.time}</span><span>${match.group}</span><span>${match.venue}</span></div>
+          <div class="meta"><span>${match.date} ${match.time} 台北時間</span><span>${match.group}</span><span>${match.venue}</span></div>
           <div class="prob-row">
             <div class="prob"><small>主勝率</small><b>${pct(model.winA)}</b><div class="meter"><i style="width:${model.winA}%"></i></div></div>
             <div class="prob"><small>平手率</small><b>${pct(model.draw)}</b><div class="meter"><i style="width:${model.draw}%"></i></div></div>
@@ -1032,7 +1117,7 @@
 
     function renderTeamOptions() {
       document.getElementById("teamOptions").innerHTML = teams
-        .map(team => `<option value="${team}">${teamOptionText(team)}</option>`)
+        .map(team => `<option value="${displayTeam(team)}">${teamOptionText(team)}</option>`)
         .join("");
     }
 
@@ -1048,8 +1133,8 @@
 
     function readMatchInput() {
       return {
-        teamA: document.getElementById("teamA").value || "A隊",
-        teamB: document.getElementById("teamB").value || "B隊",
+        teamA: resolveTeam(document.getElementById("teamA").value || "A隊"),
+        teamB: resolveTeam(document.getElementById("teamB").value || "B隊"),
         eloA: readNum("eloA"), eloB: readNum("eloB"),
         formA: readNum("formA"), formB: readNum("formB"),
         gfA: readNum("gfA"), gfB: readNum("gfB"),
@@ -1074,7 +1159,8 @@
       const kpis = [
         ["A隊勝率", pct(model.winA)], ["平手率", pct(model.draw)], ["B隊勝率", pct(model.winB)],
         ["預估總進球", model.expectedGoals.toFixed(2)], ["大球機率", pct(model.over)], ["小球機率", pct(model.under)],
-        ["爆冷率", `${pct(model.upset)}｜${model.upsetLevel}`], ["AI信心分數", pct(model.confidence)]
+        ["爆冷率", `${pct(model.upset)}｜${model.upsetLevel}`], ["AI信心分數", pct(model.confidence)],
+        ["A模型分", model.scoreA.toFixed(1)], ["B模型分", model.scoreB.toFixed(1)]
       ];
       document.getElementById("resultKpis").innerHTML = kpis.map(([label, value]) => `<div class="kpi"><small>${label}</small><b>${value}</b></div>`).join("");
       document.getElementById("singleRisk").innerHTML = riskLabel(model.riskColor);
@@ -1113,8 +1199,8 @@
     function loadSelectedMatch() {
       const match = todayMatches[selectedMatchIndex];
       const h = baseRatings[match.home], a = baseRatings[match.away];
-      document.getElementById("teamA").value = match.home;
-      document.getElementById("teamB").value = match.away;
+      document.getElementById("teamA").value = displayTeam(match.home);
+      document.getElementById("teamB").value = displayTeam(match.away);
       document.getElementById("eloA").value = h.elo;
       document.getElementById("eloB").value = a.elo;
       document.getElementById("formA").value = Math.round(h.form);
